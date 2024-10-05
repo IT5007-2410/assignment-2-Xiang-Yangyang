@@ -11,6 +11,32 @@ const initialTravellers = [
 ];
 
 
+const newTravellers = [
+  {
+    id: 1, 
+    name: 'Jack', 
+    phone: 88885555,
+    email: 'jack@example.com',  // new field
+    age: 28,                    // new field
+    gender: 'Male',             // new field
+    seatNumber: 'A1',           // new field
+    isVIP: false,               // new field
+    bookingTime: new Date(),    
+  },
+  {
+    id: 2, 
+    name: 'Rose', 
+    phone: 88884444,
+    email: 'rose@example.com',  // new field段
+    age: 25,                    // new field段
+    gender: 'Female',           // new field段
+    seatNumber: 'B2',           // new field段
+    isVIP: true,                // new field段
+    bookingTime: new Date(),    
+  },
+];
+
+
 function TravellerRow(props) {
   {/*Q3. Placeholder to initialize local variable based on traveller prop.*/}
   return (
@@ -103,6 +129,7 @@ class TicketToRide extends React.Component {
     this.state = { travellers: [], selector: 1};
     this.bookTraveller = this.bookTraveller.bind(this);
     this.deleteTraveller = this.deleteTraveller.bind(this);
+    console.log(this.state.travellers,"travellers");
   }
 
   setSelector(value)
@@ -115,7 +142,7 @@ class TicketToRide extends React.Component {
 
   loadData() {
     setTimeout(() => {
-      this.setState({ travellers: initialTravellers });
+      this.setState({ travellers: newTravellers });
     }, 500);
   }
 
