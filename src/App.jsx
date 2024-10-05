@@ -291,8 +291,19 @@ class TicketToRide extends React.Component {
   }
 
   deleteTraveller(id) {
+    const travellerExists = this.state.travellers.some(
+      (traveller) => traveller.id === id
+    );
+    
+    if (!travellerExists) {
+      alert(`Traveller with ID ${id} does not exist!`);
+      return;
+    }
+  
     this.setState((prevState) => ({
-      travellers: prevState.travellers.filter((traveller) => traveller.id !== id),
+      travellers: prevState.travellers.filter(
+        (traveller) => traveller.id !== id
+      ),
     }));
   }
 
