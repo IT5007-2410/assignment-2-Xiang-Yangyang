@@ -27,42 +27,54 @@ const newTravellers = [
     id: 2, 
     name: 'Rose', 
     phone: 88884444,
-    email: 'rose@example.com',  // new field段
-    age: 25,                    // new field段
-    gender: 'Female',           // new field段
-    seatNumber: 'B2',           // new field段
-    isVIP: true,                // new field段
+    email: 'rose@example.com',  // new field
+    age: 25,                    // new field
+    gender: 'Female',           // new field
+    seatNumber: 'B2',           // new field
+    isVIP: true,                // new field
     bookingTime: new Date(),    
   },
 ];
 
-
 function TravellerRow(props) {
-  {/*Q3. Placeholder to initialize local variable based on traveller prop.*/}
+  const { traveller } = props; // Get traveller data from props
   return (
     <tr>
-	  {/*Q3. Placeholder for rendering one row of a table with required traveller attribute values.*/}
+      <td>{traveller.id}</td>
+      <td>{traveller.name}</td>
+      <td>{traveller.phone}</td>
+      <td>{traveller.email}</td> {/* new field */}
+      <td>{traveller.age}</td> {/* new field */}
+      <td>{traveller.gender}</td> {/* new field */}
+      <td>{traveller.seatNumber}</td> {/* new field */}
+      <td>{traveller.isVIP ? 'Yes' : 'No'}</td> {/* new field */}
+      <td>{traveller.bookingTime.toLocaleString()}</td> {/* Display formatted time */}
     </tr>
   );
 }
 
 function Display(props) {
+  const { travellers } = props; // Get travellers array from props
   
-	/*Q3. Write code to render rows of table, reach corresponding to one traveller. Make use of the TravellerRow function that draws one row.*/
-
   return (
     <table className="bordered-table">
       <thead>
         <tr>
-	  {/*Q3. Below table is just an example. Add more columns based on the traveller attributes you choose.*/}
           <th>ID</th>
           <th>Name</th>
           <th>Phone</th>
+          <th>Email</th> {/* new field */}
+          <th>Age</th> {/* new field */}
+          <th>Gender</th> {/* new field */}
+          <th>Seat Number</th> {/* new field */}
+          <th>VIP</th> {/* new field */}
           <th>Booking Time</th>
         </tr>
       </thead>
       <tbody>
-        {/*Q3. write code to call the JS variable defined at the top of this function to render table rows.*/}
+        {travellers.map((traveller) => (
+          <TravellerRow key={traveller.id} traveller={traveller} />
+        ))}
       </tbody>
     </table>
   );
@@ -89,7 +101,6 @@ class Add extends React.Component {
     );
   }
 }
-
 
 class Delete extends React.Component {
   constructor() {
@@ -123,19 +134,20 @@ class Homepage extends React.Component {
 	</div>);
 	}
 }
+
 class TicketToRide extends React.Component {
   constructor() {
     super();
-    this.state = { travellers: [], selector: 1};
+    this.state = {
+      travellers: [], 
+      selector: 'homepage',  // Default to showing homepage
+      totalSeats: 10, // Total number of seats in the train
+    };
     this.bookTraveller = this.bookTraveller.bind(this);
     this.deleteTraveller = this.deleteTraveller.bind(this);
-    console.log(this.state.travellers,"travellers");
+    this.setSelector = this.setSelector.bind(this); // Bind the function for the navigation bar
   }
 
-  setSelector(value)
-  {
-  	/*Q2. Function to set the value of component selector variable based on user's button click.*/
-  }
   componentDidMount() {
     this.loadData();
   }
@@ -146,28 +158,59 @@ class TicketToRide extends React.Component {
     }, 500);
   }
 
+  // Switch the currently displayed component
+  setSelector(value) {
+    this.setState({ selector: value });
+  }
+
+  // Function to display the number of free seats
+  displayFreeSeats() {
+    const freeSeats = this.state.totalSeats - this.state.travellers.length;
+    return (
+      <div>
+        <h3>Available Seats: {freeSeats}</h3>
+      </div>
+    );
+  }
+
   bookTraveller(passenger) {
-	    /*Q4. Write code to add a passenger to the traveller state variable.*/
+    /*Q4. Write code to add a passenger to the traveller state variable.*/
   }
 
   deleteTraveller(passenger) {
-	  /*Q5. Write code to delete a passenger from the traveller state variable.*/
+    /*Q5. Write code to delete a passenger from the traveller state variable.*/
   }
+
   render() {
+    const { selector } = this.state;
+
     return (
       <div>
         <h1>Ticket To Ride</h1>
-	<div>
-	    {/*Q2. Code for Navigation bar. Use basic buttons to create a nav bar. Use states to manage selection.*/}
-	</div>
-	<div>
-		{/*Only one of the below four divisions is rendered based on the button clicked by the user.*/}
-		{/*Q2 and Q6. Code to call Instance that draws Homepage. Homepage shows Visual Representation of free seats.*/}
-		{/*Q3. Code to call component that Displays Travellers.*/}
-		
-		{/*Q4. Code to call the component that adds a traveller.*/}
-		{/*Q5. Code to call the component that deletes a traveller based on a given attribute.*/}
-	</div>
+        {/* Navigation bar */}
+        <div>
+          <button onClick={() => this.setSelector('homepage')}>Homepage</button>
+          <button onClick={() => this.setSelector('add')}>Add Traveller</button>
+          <button onClick={() => this.setSelector('display')}>Display Travellers</button>
+        </div>
+
+        {/* Display the component based on the selector value */}
+        <div>
+          {selector === 'homepage' && (
+            <div>
+              <h2>Welcome to the High-Speed Railway Booking System</h2>
+              {this.displayFreeSeats()} {/* Display the number of available seats */}
+            </div>
+          )}
+
+          {selector === 'add' && (
+            <Add />
+          )}
+
+          {selector === 'display' && (
+            <Display travellers={this.state.travellers} />
+          )}
+        </div>
       </div>
     );
   }
