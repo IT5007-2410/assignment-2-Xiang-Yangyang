@@ -35,7 +35,7 @@ const newTravellers = [
 ];
 
 function TravellerRow(props) {
-  const { traveller } = props;
+  const { traveller, onDelete } = props;
   return (
     <tr>
       <td>{traveller.id}</td>
@@ -47,12 +47,15 @@ function TravellerRow(props) {
       <td>{traveller.seatNumber}</td>
       <td>{traveller.isVIP ? 'Yes' : 'No'}</td>
       <td>{traveller.bookingTime.toLocaleString()}</td>
+      <td>
+        <button onClick={() => onDelete(traveller.id)}>Delete</button>
+      </td>
     </tr>
   );
 }
 
 function Display(props) {
-  const { travellers } = props;
+  const { travellers, onDelete } = props;
   return (
     <table className="bordered-table">
       <thead>
@@ -66,11 +69,12 @@ function Display(props) {
           <th>Seat Number</th>
           <th>VIP</th>
           <th>Booking Time</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         {travellers.map((traveller) => (
-          <TravellerRow key={traveller.id} traveller={traveller} />
+          <TravellerRow key={traveller.id} traveller={traveller} onDelete={onDelete} />
         ))}
       </tbody>
     </table>
@@ -156,6 +160,43 @@ class Add extends React.Component {
   }
 }
 
+class DeleteForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      idToDelete: '',
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleSubmit(e) {
+    e.preventDefault();
+    const id = parseInt(this.state.idToDelete);
+    this.props.deleteTraveller(id); 
+    this.setState({ idToDelete: '' });
+  }
+
+  handleChange(e) {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+
+  render() {
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <input
+          type="number"
+          name="idToDelete"
+          placeholder="Enter Traveller ID to Delete"
+          value={this.state.idToDelete}
+          onChange={this.handleChange}
+        />
+        <button type="submit">Delete</button>
+      </form>
+    );
+  }
+}
+
 class TicketToRide extends React.Component {
   constructor() {
     super();
@@ -165,6 +206,7 @@ class TicketToRide extends React.Component {
       totalSeats: 10,
     };
     this.bookTraveller = this.bookTraveller.bind(this);
+    this.deleteTraveller = this.deleteTraveller.bind(this);
     this.setSelector = this.setSelector.bind(this); 
   }
 
@@ -188,6 +230,12 @@ class TicketToRide extends React.Component {
     }));
   }
 
+  deleteTraveller(id) {
+    this.setState((prevState) => ({
+      travellers: prevState.travellers.filter(traveller => traveller.id !== id),
+    }));
+  }
+
   render() {
     const { selector, travellers } = this.state;
 
@@ -198,6 +246,7 @@ class TicketToRide extends React.Component {
           <button onClick={() => this.setSelector('homepage')}>Homepage</button>
           <button onClick={() => this.setSelector('add')}>Add Traveller</button>
           <button onClick={() => this.setSelector('display')}>Display Travellers</button>
+          <button onClick={() => this.setSelector('delete')}>Delete Traveller</button>
         </div>
         <div>
           {selector === 'homepage' && (
@@ -210,7 +259,10 @@ class TicketToRide extends React.Component {
             <Add travellers={travellers} bookTraveller={this.bookTraveller} />
           )}
           {selector === 'display' && (
-            <Display travellers={travellers} />
+            <Display travellers={travellers} onDelete={this.deleteTraveller} />
+          )}
+          {selector === 'delete' && (
+            <DeleteForm deleteTraveller={this.deleteTraveller} />
           )}
         </div>
       </div>
