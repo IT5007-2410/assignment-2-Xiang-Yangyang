@@ -1,36 +1,25 @@
-const initialTravellers = [
-  {
-    id: 1, name: 'Jack', phone: 88885555,
-    bookingTime: new Date(),
-  },
-  {
-    id: 2, name: 'Rose', phone: 88884444,
-    bookingTime: new Date(),
-  },
-];
-
 const newTravellers = [
   {
-    id: 1, 
-    name: 'Jack', 
+    id: 1,
+    name: 'Jack',
     phone: 88885555,
     email: 'jack@example.com',
-    age: 28,                    
-    gender: 'Male',             
-    seatNumber: 'A1',           
-    isVIP: false,               
-    bookingTime: new Date(),    
+    age: 28,
+    gender: 'Male',
+    seatNumber: 'A1',
+    isVIP: false,
+    bookingTime: new Date(),
   },
   {
-    id: 2, 
-    name: 'Rose', 
+    id: 2,
+    name: 'Rose',
     phone: 88884444,
-    email: 'rose@example.com',  
-    age: 25,                    
-    gender: 'Female',           
-    seatNumber: 'B2',           
-    isVIP: true,                
-    bookingTime: new Date(),    
+    email: 'rose@example.com',
+    age: 25,
+    gender: 'Female',
+    seatNumber: 'B2',
+    isVIP: true,
+    bookingTime: new Date(),
   },
 ];
 
@@ -74,7 +63,11 @@ function Display(props) {
       </thead>
       <tbody>
         {travellers.map((traveller) => (
-          <TravellerRow key={traveller.id} traveller={traveller} onDelete={onDelete} />
+          <TravellerRow
+            key={traveller.id}
+            traveller={traveller}
+            onDelete={onDelete}
+          />
         ))}
       </tbody>
     </table>
@@ -89,7 +82,7 @@ class Add extends React.Component {
       phone: '',
       email: '',
       age: '',
-      gender: 'Male', // 默认选择 Male
+      gender: 'Male',
       seatNumber: '',
       isVIP: false,
     };
@@ -100,7 +93,7 @@ class Add extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const newTraveller = {
-      id: this.props.travellers.length + 1, 
+      id: this.props.travellers.length + 1,
       name: this.state.name,
       phone: this.state.phone,
       email: this.state.email,
@@ -110,13 +103,13 @@ class Add extends React.Component {
       isVIP: this.state.isVIP,
       bookingTime: new Date(),
     };
-    this.props.bookTraveller(newTraveller); 
+    this.props.bookTraveller(newTraveller);
     this.setState({
       name: '',
       phone: '',
       email: '',
       age: '',
-      gender: 'Male', // 重置为默认值
+      gender: 'Male',
       seatNumber: '',
       isVIP: false,
     });
@@ -134,25 +127,63 @@ class Add extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <input type="text" name="name" placeholder="Name" value={this.state.name} onChange={this.handleChange} />
-        <input type="text" name="phone" placeholder="Phone" value={this.state.phone} onChange={this.handleChange} />
-        <input type="text" name="email" placeholder="Email" value={this.state.email} onChange={this.handleChange} />
-        <input type="number" name="age" placeholder="Age" value={this.state.age} onChange={this.handleChange} />
-        
-        {/* 性别下拉选择框 */}
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={this.state.name}
+          onChange={this.handleChange}
+        />
+        <input
+          type="text"
+          name="phone"
+          placeholder="Phone"
+          value={this.state.phone}
+          onChange={this.handleChange}
+        />
+        <input
+          type="text"
+          name="email"
+          placeholder="Email"
+          value={this.state.email}
+          onChange={this.handleChange}
+        />
+        <input
+          type="number"
+          name="age"
+          placeholder="Age"
+          value={this.state.age}
+          onChange={this.handleChange}
+        />
+
         <label>
           Gender:
-          <select name="gender" value={this.state.gender} onChange={this.handleChange}>
+          <select
+            name="gender"
+            value={this.state.gender}
+            onChange={this.handleChange}
+          >
             <option value="Male">Male</option>
             <option value="Female">Female</option>
             <option value="Other">Other</option>
           </select>
         </label>
 
-        <input type="text" name="seatNumber" placeholder="Seat Number" value={this.state.seatNumber} onChange={this.handleChange} />
+        <input
+          type="text"
+          name="seatNumber"
+          placeholder="Seat Number"
+          value={this.state.seatNumber}
+          onChange={this.handleChange}
+        />
         <label>
           VIP:
-          <input type="checkbox" name="isVIP" checked={this.state.isVIP} onChange={this.handleChange} />
+          <input
+            type="checkbox"
+            name="isVIP"
+            checked={this.state.isVIP}
+            onChange={this.handleChange}
+          />
         </label>
         <button type="submit">Add</button>
       </form>
@@ -173,7 +204,7 @@ class DeleteForm extends React.Component {
   handleSubmit(e) {
     e.preventDefault();
     const id = parseInt(this.state.idToDelete);
-    this.props.deleteTraveller(id); 
+    this.props.deleteTraveller(id);
     this.setState({ idToDelete: '' });
   }
 
@@ -197,17 +228,42 @@ class DeleteForm extends React.Component {
   }
 }
 
+class SeatGrid extends React.Component {
+  render() {
+    const totalSeats = 10;
+    const bookedSeats = this.props.travellers.length;
+
+    const seats = Array.from({ length: totalSeats }, (_, i) => {
+      const isBooked = i < bookedSeats;
+      return (
+        <div
+          key={i}
+          style={{
+            backgroundColor: isBooked ? 'grey' : 'green',
+            margin: '5px',
+            padding: '10px',
+            width: '40px',
+            height: '40px',
+          }}
+        />
+      );
+    });
+
+    return <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: '220px' }}>{seats}</div>;
+  }
+}
+
 class TicketToRide extends React.Component {
   constructor() {
     super();
     this.state = {
-      travellers: [], 
-      selector: 'homepage', 
+      travellers: [],
+      selector: 'homepage',
       totalSeats: 10,
     };
     this.bookTraveller = this.bookTraveller.bind(this);
     this.deleteTraveller = this.deleteTraveller.bind(this);
-    this.setSelector = this.setSelector.bind(this); 
+    this.setSelector = this.setSelector.bind(this);
   }
 
   componentDidMount() {
@@ -225,19 +281,23 @@ class TicketToRide extends React.Component {
   }
 
   bookTraveller(newTraveller) {
-    this.setState((prevState) => ({
-      travellers: [...prevState.travellers, newTraveller],
-    }));
+    if (this.state.travellers.length < 10) {
+      this.setState((prevState) => ({
+        travellers: [...prevState.travellers, newTraveller],
+      }));
+    } else {
+      alert('No more available seats!');
+    }
   }
 
   deleteTraveller(id) {
     this.setState((prevState) => ({
-      travellers: prevState.travellers.filter(traveller => traveller.id !== id),
+      travellers: prevState.travellers.filter((traveller) => traveller.id !== id),
     }));
   }
 
   render() {
-    const { selector, travellers } = this.state;
+    const { selector, travellers, totalSeats } = this.state;
 
     return (
       <div>
@@ -251,8 +311,8 @@ class TicketToRide extends React.Component {
         <div>
           {selector === 'homepage' && (
             <div>
-              <h2>Welcome to the High-Speed Railway Booking System</h2>
-              <h3>Available Seats: {this.state.totalSeats - travellers.length}</h3>
+              <h2>Available Seats: {totalSeats - travellers.length} / {totalSeats}</h2>
+              <SeatGrid travellers={travellers} />
             </div>
           )}
           {selector === 'add' && (
